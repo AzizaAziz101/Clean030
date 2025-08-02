@@ -194,6 +194,19 @@
   </div>
 </footer>
 
+<a href="#"
+   id="backToTop"
+   class="back-to-top fixed right-6 bottom-6 z-50 w-14 h-14 flex items-center justify-center
+          bg-yellow-400 text-black rounded-lg
+          transition-colors duration-300 ease-in-out hover:bg-[#00539C] opacity-0 pointer-events-none">
+
+  <svg xmlns="http://www.w3.org/2000/svg"
+       class="h-7 w-7"
+       viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15" />
+  </svg>
+</a>
+
 <!-- JAVASCRIPT -->
 <script>
 /* Reveal Animation */
@@ -290,6 +303,54 @@ window.addEventListener("resize", () => {
     canvas.style.display = "none";
   }
 });
+
+  function easeInOutExpo(t) {
+    if (t === 0) return 0;
+    if (t === 1) return 1;
+    if (t < 0.5) {
+      return Math.pow(2, 20 * t - 10) / 2;
+    } else {
+      return (2 - Math.pow(2, -20 * t + 10)) / 2 - 0.00005 * (1 - t);
+    }
+  }
+
+  function scrollToTop(duration = 1500) {
+    const start = window.scrollY || document.documentElement.scrollTop;
+    const startTime = performance.now();
+
+    function animate(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeInOutExpo(progress);
+      const scrollY = start * (1 - easedProgress);
+      window.scrollTo(0, scrollY);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const backToTop = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 600) {
+        backToTop.classList.remove("opacity-0", "pointer-events-none");
+        backToTop.classList.add("opacity-100");
+      } else {
+        backToTop.classList.remove("opacity-100");
+        backToTop.classList.add("opacity-0", "pointer-events-none");
+      }
+    });
+
+    backToTop.addEventListener("click", (e) => {
+      e.preventDefault();
+      scrollToTop(1500);
+    });
+  });
 
 </script>
 
