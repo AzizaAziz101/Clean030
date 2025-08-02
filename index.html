@@ -267,18 +267,30 @@ function initCanvas() {
   animate();
 }
 
-/* Initialisieren bei Load und Resize */
+function shouldRunCanvas() {
+  return window.innerWidth >= 1024; // nur ab lg (1024px)
+}
+
 window.addEventListener("load", () => {
-  setTimeout(() => {
-    initCanvas();
-  }, 1500); // 1,5 Sekunden Verzögerung
+  if (shouldRunCanvas()) {
+    setTimeout(() => {
+      initCanvas();
+    }, 1500);
+  }
 });
 
 window.addEventListener("resize", () => {
-  document.querySelector(".wipe-canvas").style.display = "block";
-  document.querySelector(".wipe-canvas").style.opacity = "1";
-  initCanvas();
+  const canvas = document.querySelector(".wipe-canvas");
+
+  if (shouldRunCanvas()) {
+    canvas.style.display = "block";
+    canvas.style.opacity = "1";
+    initCanvas();
+  } else {
+    canvas.style.display = "none";
+  }
 });
+
 </script>
 
 </body>
