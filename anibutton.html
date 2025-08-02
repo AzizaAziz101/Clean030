@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Up Berlin – Professional Cleaning</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    @keyframes fade-in-slow {
+      0% { opacity: 0; transform: scale(0.7777); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    .animate-fade-in-slow { animation: fade-in-slow 0.9s ease-out both; }
+
+    @keyframes slide-in-left {
+      0% { opacity: 0; transform: translateX(-300%); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    .promo-text-animate { 
+      display: inline-block; 
+      animation: slide-in-left 0.3s ease-out forwards; 
+      animation-delay: 1.2s; 
+      opacity: 0; 
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(90deg, #F7AFAE 0%, #FFF4B7 100%);
+      font-family: Arial, sans-serif;
+      color: #4B3F3A;
+    }
+
+    .header {
+      position: relative;
+      background: transparent;
+    }
+
+    canvas.wipe-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body class="font-['Segoe_UI'] relative min-h-screen">
+
+<!-- HEADER + Promo-Banner -->
+<div class="header">
+  <canvas class="wipe-canvas"></canvas>
+
+  <div class="header-content">
+    <!-- Top Navigation -->
+    <div class="flex justify-between items-center whitespace-nowrap overflow-x-auto px-4 py-3">
+      <a href="index.html" class="font-medium text-lg mr-6 hover:opacity-80">
+        CleanUpBerlin.de
+      </a>
+      <div class="flex items-center gap-6 font-medium text-base">
+        <a href="tel:+49 30 123456" class="flex items-center gap-2 hover:opacity-80">
+          <span>Call us:</span>
+          <span class="text-sm">+49 30 123456</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Promo-Banner -->
+    <div class="text-center text-[#4B3F3A] text-sm px-6 py-1.5 font-bold"
+         
+      <span class="promo-text-animate">
+        New Customer Offer – 5% Discount on Your First Cleaning
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="mt-10 text-center reveal">
+  <h1 class="text-2xl font-bold mb-4">Clean Up Berlin – Sparkling Clean for Your Home & Office</h1>
+</div>
+
+<div class="mb-20 mt-20 max-w-5xl mx-auto px-4 reveal">
+  <img src="iStock-CleanUpLizensiert.jpg" alt="Cleaning service in Berlin"
+       class="w-3/4 mx-auto rounded-3xl animate-fade-in-slow"/>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+/* Reveal Animation */
+const reveals = document.querySelectorAll(".reveal");
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.remove("opacity-0", "translate-y-10");
+      entry.target.classList.add("opacity-100", "translate-y-0");
+    }
+  });
+}, { threshold: 0.2 });
+
+reveals.forEach(el => {
+  el.classList.add("opacity-0","translate-y-10","transition-all","duration-700","ease-out");
+  observer.observe(el);
+});
+
+/* Canvas Animation über Header + Promo */
+function initCanvas() {
+  const canvas = document.querySelector(".wipe-canvas");
+  const header = document.querySelector(".header");
+  const ctx = canvas.getContext("2d");
+
+  const width = header.offsetWidth;
+  const height = header.offsetHeight;
+
+  // Pixelgröße für High-DPI
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  let radius = 0;
+  const maxRadius = Math.sqrt(width * width + height * height);
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(120,120,120,0.7)";
+    ctx.fillRect(0, 0, width, height);
+
+    let gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.6, centerX, centerY, radius);
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function animate() {
+    radius += 6;
+    draw();
+
+    if (radius < maxRadius) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.style.transition = "opacity 1s ease";
+      canvas.style.opacity = "0";
+      setTimeout(() => {
+        canvas.style.display = "none";
+      }, 1000);
+    }
+  }
+
+  animate();
+}
+
+/* Initialisieren bei Load und Resize */
+window.addEventListener("load", initCanvas);
+window.addEventListener("resize", () => {
+  document.querySelector(".wipe-canvas").style.display = "block";
+  document.querySelector(".wipe-canvas").style.opacity = "1";
+  initCanvas();
+});
+</script>
+
+</body>
+</html>

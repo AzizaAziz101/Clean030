@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BellaCare Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+@keyframes fade-in-slow {
+    0% {
+      opacity: 0;
+      transform: scale(0.7777);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.0);
+    }
+  }
+
+  .animate-fade-in-slow {
+    animation: fade-in-slow 1.1s ease-out both;
+  }
+
+    @keyframes button-fade-bounce {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+      border-color: transparent;
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.4);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .animate-button-entry {
+    animation: button-fade-bounce 0.1s ease-out forwards;
+  }
+
+  .custom-border {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes borderOutline {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.button-outline {
+  position: relative;
+}
+
+.button-outline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  mask-image: linear-gradient(0deg, #000 0%, #000 100%);
+  -webkit-mask-image: linear-gradient(0deg, #000 0%, #000 100%);
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: borderOutline 1.5s ease-out forwards;
+}
+
+
+
+
+@keyframes pulse-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.13); /* dezente Vergrößerung */
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse-grow-once {
+  animation: pulse-scale 0.4s ease-out forwards;
+}
+
+
+@keyframes slide-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-300%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.promo-text-animate {
+  display: inline-block;
+  animation: slide-in-left 0.3s ease-out forwards;
+  animation-delay: 1.2s;
+  opacity: 0;
+}
+
+
+@keyframes elegantChatIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(30px);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.chat-elegant-in {
+  animation: elegantChatIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+
+    body {
+      margin: 0;
+      background: #a0d3eb;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      position: relative;
+      height: 23vh; /* responsive Höhe */
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .glaze {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background: #e26aa6; /* pink */
+      clip-path: url(#waveClip);
+      animation: flowDown 2.5s forwards ease-out;
+      animation-delay: 1.22s;
+    }
+
+    @keyframes flowDown {
+      from {
+        height: 0;
+      }
+      to {
+        height: 100%;
+      }
+    }
+
+    .content {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding: 1rem;
+      }
+
+      .header {
+        height: 25vh;
+      }
+    }
+</style>
+</head>
+<body class="text-[#fffff] font-['Segoe_UI'] relative min-h-screen">
+
+  <!-- Header -->
+<header class="bg-[#e26aa6] px-6 py-4 text-base">
+  <div class="flex justify-between items-center whitespace-nowrap overflow-x-auto">
+    <a href="index.html" class="text-cyan-600 font-medium text-lg mr-6">
+      TinglyDonuts.com
+    </a>
+    <div class="flex items-center gap-6 text-cyan-600 font-medium text-base">
+      <a href="tel:+49 345 00000" class="flex items-center gap-2">
+        <span class="text-base">Call us:</span>
+        <span class="text-sm">+49 300 00000</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Promo-Banner -->
+<div class="text-center text-white text-sm px-6 py-1.5 font-bold" style="background-color: #e26aa6">
+  <span class="promo-text-animate">New customer special – get 5% off your first order</span>
+</div>
+
+
+
+  <div class="header">
+    <div class="glaze"></div>
+  </div>
+
+  <!-- SVG ClipPath mit höheren Wellen (responsiv durch objectBoundingBox) -->
+  <svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <clipPath id="waveClip" clipPathUnits="objectBoundingBox">
+        <path d="
+          M0,0
+          L1,0
+          L1,0.75
+          C0.92,0.95 0.82,0.65 0.72,0.85
+          C0.62,1.05 0.52,0.65 0.42,0.85
+          C0.32,1.05 0.22,0.65 0.12,0.85
+          C0.02,1.05 0,0.75 0,0.75
+          Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
+<!-- Hauptbereich -->
+<main class="text-black mx-auto px-4 py-6">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold mb-4">Tingly Dounuts – Shine Bright Every Day</h1>
+    <h2 class="text-pink-500 text-2xl font-bold mb-6"><h2></h2>
+
+  </div>
+
+
+<div class="mb-2 max-w-5xl mx-auto px-4">
+  <img
+    src="20076.jpg"
+    alt="Beautiful scene"
+    class="w-3/4 mx-auto rounded-3xl animate-fade-in-slow"
+  />
+</div>
+
+
+
+
+
+
+
+<div class="mx-auto px-6 md:px-16 py-6">
+  <p class="mb-8 leading-relaxed font-semibold">
+    At Sweet Loop, we delight your taste buds with handcrafted donuts, premium ingredients, and irresistible flavors — all made fresh with love and care.
+  </p>
+  <p class="mb-16 leading-relaxed font-semibold">
+    We’re passionate about making your day sweeter, offering delicious treats made with high-quality ingredients and creative, on-trend recipes.
+  </p>
+
+  <h2 class="text-2xl font-semibold mb-6">Why Sweet Loop?</h2>
+  <p class="mb-10 leading-relaxed font-semibold">
+    Our mission is to bring joy through freshly baked donuts that match your cravings and style. Whether you're picking a classic glaze, trying a bold new flavor, or grabbing a box to share, we deliver moments that stand out.
+  </p>
+  <p class="mb-12 leading-relaxed font-semibold">
+    At Sweet Loop, we blend baking expertise with creativity, offering seasonal specials, friendly service, and a cozy atmosphere every time. Your sweet moment starts here.
+  </p>
+</div>
+
+
+
+</main>
+<main class="bg-[#e26aa6]">
+<!-- Engagement-Bereich mit hellblauem Vollbild-Hintergrund ohne äußeres Padding -->
+
+<section class="bg-[#e26aa6] text-black py-7">
+  <div class="w-full max-w-3xl mx-auto px-4">
+    <h2 class="text-2xl font-semibold text-black mb-8 text-center">Services</h2>
+    <p class="font-semibold text-black mb-4 text-center">
+      At Luminous, you are our priority. We believe that beauty boosts confidence and enhances your everyday life.
+    </p>
+    <p class="font-semibold text-black text-center">
+      With our reliable team and modern treatments, we deliver stunning, hygienic results – professionally, consciously, and with a touch of glam.
+    </p>
+    <p class="font-semibold text-black mb-4 text-center">
+      At Luminous, you are our priority. We believe that beauty boosts confidence and enhances your everyday life.
+    </p>
+    <p class="font-semibold text-black text-center">
+      With our reliable team and modern treatments, we deliver stunning, hygienic results – professionally, consciously, and with a touch of glam.
+    </p>
+  </div>
+</section>
+
+
+
+<!-- Tabelle -->
+<div class="overflow-x-auto max-w-3xl mx-auto text-gray-800 text-lg mt-3">
+  <table class="w-full table-auto border-2 border-blue-200 rounded-2xl bg-white shadow-sm" style="border-collapse: separate;">
+    <thead class="bg-blue-100">
+      <tr>
+        <th class="px-3 py-2 md:px-5 md:py-4 text-left font-bold border-b border-blue-200 rounded-tl-2xl text-sm md:text-lg">Service</th>
+        <th class="px-3 py-2 md:px-5 md:py-4 text-left font-bold border-b border-blue-200 text-sm md:text-lg">Time</th>
+        <th class="px-3 py-2 md:px-5 md:py-4 text-left font-bold border-b border-blue-200 rounded-tr-2xl text-sm md:text-lg">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">Tooth Gems</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">15–30 mins</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">From €40</td>
+      </tr>
+      <tr>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">Teeth Whitening</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">45–60 mins</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">From €79</td>
+      </tr>
+      <tr>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium rounded-bl-2xl text-sm md:text-lg">Lashes (Extensions/Lift)</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium text-sm md:text-lg">60–90 mins</td>
+        <td class="px-3 py-2 md:px-5 md:py-4 font-medium rounded-br-2xl text-sm md:text-lg">From €55</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+ 
+
+  <section class="bg-[#] text-black py-7">
+  <div class="w-full max-w-3xl mx-auto px-4">
+    <p class="font-semibold text-black mt-3 mb-3 text-center">
+      Because your hands deserve more than just color – they deserve care, elegance, and a little everyday magic.
+    </p>
+  </div>
+</section>
+</main>
+
+bg-[#14b8a6]
+
+<div class="mx-auto px-6 md:px-16 py-6">
+  <h2 class="text-2xl font-semibold mb-6">Tingly Donuts for everyone</h2>
+  <p class="mb-10 leading-relaxed font-semibold">
+    Our mission is to bring joy through freshly baked donuts that match your cravings and style. Whether you're picking a classic glaze, trying a bold new flavor, or grabbing a box to share, we deliver moments that stand out.
+  </p>
+  <p class="mb-12 leading-relaxed font-semibold">
+    At Sweet Loop, we blend baking expertise with creativity, offering seasonal specials, friendly service, and a cozy atmosphere every time. Your sweet moment starts here.
+  </p>
+</div>
+
+
+
+</main>
+<main class="">
+
+
+
+  <div class=" py-5 mb-0 min-h-[425px] relative max-w-xs w-full mx-auto h-auto">
+    <!-- Unteres Bild -->
+    <img
+      src="Softdrinks.jpg"
+      alt="Image Shadow"
+      class="rounded-2xl w-full h-[300px] object-cover
+             block mb-4 md:absolute md:top-20 md:left-32 md:mb-0"
+    />
+    <!-- Oberes Bild -->
+    <img
+      src="whitechoclate.jpg"
+      alt="Main Image"
+      class="rounded-2xl w-full h-[300px] object-cover z-10
+             block md:relative md:-left-32"
+    />
+  </div>
+
+  <section class="bg-[#a0d3eb] text-black py-7">
+  <div class="w-full max-w-3xl mx-auto px-4">
+    <p class="font-semibold text-cyan-600 mt-10 mb-0 text-center">
+      Because your hands deserve more than just color – they deserve care, elegance, and a little everyday magic.
+    </p>
+  </div>
+</section>
+</main>
+
+<!-- Chat öffnen Button -->
+<button id="openChat"
+  class="fixed bottom-6 right-6 bg-cyan-500 text-[#0f0f0f] px-5 py-3 rounded-full text-sm font-semibold shadow-lg hover:bg-cyan-400 transition overflow-hidden">
+  Chat öffnen...
+</button>
+
+
+  <!-- Modal -->
+  <div id="chatModal" class="fixed inset-0 bg-black/70 flex justify-center items-center z-50 hidden">
+  <div class="modal-content bg-[#0f0f0f] w-full max-w-[650px] rounded-2xl shadow-2xl p-6 relative flex flex-col items-center">
+
+      <!-- Close Button -->
+      <button id="closeChat" class="absolute top-3 right-4 text-[#ccc] text-2xl font-bold hover:text-white">&times;</button>
+
+      <!-- Chat Content -->
+      <header class="text-center mb-6">
+        <h1 class="text-[1.7rem] text-cyan-500 font-semibold tracking-wider">Willkommen bei Azisza.s.i.x</h1>
+      </header>
+
+
+
+      <div id="chat" class="w-full max-w-[600px] mb-4 bg-transparent p-0 rounded-none shadow-none overflow-y-auto max-h-[300px]"></div>
+
+      <input type="text" id="input"
+             placeholder="Frage stellen..."
+             class="w-full max-w-[600px] px-[18px] py-[14px] text-base bg-[#2a2a2a] text-[#f5f5f5] rounded-[12px] border-none shadow-inner shadow-black/60 placeholder:text-[#ccc] focus:outline-none focus:bg-[#333]" />
+    </div>
+  </div>
+
+    <!-- Stylish Footer for Luminous -->
+  <footer class="bg-cyan-500 mt-16 text-sm text-white py-6">
+    <div class="max-w-5xl mx-auto px-6 text-center space-y-4">
+      <p class="text-base font-semibold text-gray-800">
+        &copy; 2025 TinglyDonuts – Radiant clean. Sustainably maintained.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-blue-600 font-medium">
+        <a href="Impressum.html" class="hover:underline transition-colors duration-200">Imprint</a>
+        <a href="/contact" class="hover:underline transition-colors duration-200">Contact</a>
+        <a href="/privacy-policy" class="hover:underline transition-colors duration-200">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+    <!-- Original Script (nicht verändert) -->
+    <script>
+      const input = document.getElementById("input");
+      const chat = document.getElementById("chat");
+
+      input.addEventListener("keypress", async (e) => {
+        if (e.key === "Enter") {
+          const message = input.value;
+          if (!message.trim()) return;
+          chat.innerHTML += `<div class="msg user text-[#80dfff] mb-4 leading-relaxed text-base">Du: ${message}</div>`;
+          input.value = "";
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+          });
+          const data = await res.json();
+          const htmlReply = marked.parse(data.reply);  // 👈 hier wird Markdown gerendert
+          chat.innerHTML += `<div class="msg bot text-[#b6fcb6] mb-4 leading-relaxed text-base">Bot: ${htmlReply}</div>`;
+
+          chat.scrollTop = chat.scrollHeight;
+        }
+      });
+
+      // Modal Handling
+      const openBtn = document.getElementById("openChat");
+      const closeBtn = document.getElementById("closeChat");
+      const modal = document.getElementById("chatModal");
+
+      openBtn.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+
+    const modalContent = modal.querySelector(".modal-content");
+    if (modalContent) {
+      modalContent.classList.remove("chat-elegant-in"); // Reset animation
+      void modalContent.offsetWidth; // Trigger reflow
+      modalContent.classList.add("chat-elegant-in");
+    }
+  });
+
+      
+
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+
+      window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+        }
+      });
+    </script>
+
+
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const btn = document.getElementById('openChat');
+        if (btn) {
+          btn.classList.add('button-outline');
+          btn.classList.add('pulse-grow-once');
+        }
+      }, 700);
+    });
+  </script>
+
+
+  </body>
+  </html>
