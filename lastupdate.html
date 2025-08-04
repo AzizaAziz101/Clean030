@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +9,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    @keyframes fade-in-slow {
+      0% { opacity: 0; transform: scale(0.7777); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    .animate-fade-in-slow { animation: fade-in-slow 0.9s ease-out both; }
+
     body {
       margin: 0;
       background: linear-gradient(90deg, #F7AFAE 0%, #FFF4B7 100%);
@@ -14,82 +22,45 @@
       color: #4B3F3A;
     }
 
-    /* Slide-in Animation */
-    @keyframes slideIn {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    .header {
+      position: relative;
+      background: transparent;
     }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(-100%); opacity: 0; }
-    }
-    .slide-in { animation: slideIn 0.3s ease forwards; }
-    .slide-out { animation: slideOut 0.3s ease forwards; }
 
-    /* Hamburger Animation */
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: #4B3F3A;
-      border-radius: 1px;
-      transition: all 0.3s ease;
+    canvas.wipe-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
     }
-    .hamburger.open span:nth-child(1) {
-      transform: rotate(45deg) translate(4px, 4px);
-    }
-    .hamburger.open span:nth-child(2) {
-      transform: rotate(-45deg) translate(4px, -4px);
+
+    .header-content {
+      position: relative;
+      z-index: 3;
     }
   </style>
 </head>
 <body class="font-['Segoe_UI'] relative min-h-screen">
 
 <!-- HEADER -->
-<header class="header">
+<div class="header">
+  <canvas class="wipe-canvas"></canvas>
+
   <div class="header-content">
-    <div class="flex justify-between items-center px-4 py-3 relative">
-
-      <!-- Logo -->
-      <a href="index.html" class="font-medium text-lg hover:opacity-80">
-        CleanUpBerlin.de
-      </a>
-
-      <!-- Call us: nur mobil, rechts außen vor Menü -->
-      <a href="tel:+4930123456" 
-         class="md:hidden flex items-center gap-1 font-medium text-sm px-3 py-1 absolute right-14 top-1/2 -translate-y-1/2">
-        <span>Call us:</span>
-        <span class="text-sm">+49 30 000000</span>
-      </a>
-
-      <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center gap-6 font-medium text-base">
-        <a href="#services" class="hover:opacity-80">Our Services</a>
-        <a href="#about" class="hover:opacity-80">About</a>
-        <a href="#contact" class="hover:opacity-80">Contact</a>
-      </nav>
-
-      <!-- Mobile Hamburger mit 2 Linien -->
-      <button id="menu-btn" 
-              class="hamburger md:hidden flex flex-col gap-2 ml-4 focus:outline-none relative z-10">
-        <span></span>
-        <span></span>
-      </button>
+    <div class="flex justify-between items-center whitespace-nowrap overflow-x-auto px-4 py-3">
+      <a href="index.html" class="font-medium text-lg mr-6 hover:opacity-80">
+        CleanUpBerlin.de</a> 
+      <div class="flex items-center gap-6 font-medium text-base">
+        <a href="tel:+49 30 123456" class="flex items-center gap-2 hover:opacity-80">
+          <span>Call us:</span>
+          <span class="text-sm">+49 30 000000</span>
+        </a>
+        
+      </div>
     </div>
-  </div>
-</header>
 
-<!-- Mobile Menü Overlay -->
-<div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-  <div id="menu-panel" class="bg-white w-64 h-full p-6 shadow-lg">
-    <!-- Menu Links -->
-    <nav class="flex flex-col gap-4 font-medium text-lg mt-10">
-      <a href="#services" class="hover:text-[#F7AFAE]">Our Services</a>
-      <a href="#about" class="hover:text-[#F7AFAE]">About</a>
-      <a href="#contact" class="hover:text-[#F7AFAE]">Contact</a>
-    </nav>
-  </div>
-</div>
 
 
 
@@ -247,39 +218,7 @@
 
 <!-- JAVASCRIPT -->
 <script>
-  const menuBtn = document.getElementById('menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const menuPanel = document.getElementById('menu-panel');
-
-  menuBtn.addEventListener('click', () => {
-    const isOpen = menuBtn.classList.toggle('open');
-
-    if (isOpen) {
-      mobileMenu.classList.remove('hidden');
-      menuPanel.classList.remove('slide-out');
-      menuPanel.classList.add('slide-in');
-    } else {
-      menuPanel.classList.remove('slide-in');
-      menuPanel.classList.add('slide-out');
-      setTimeout(() => {
-        mobileMenu.classList.add('hidden');
-      }, 300);
-    }
-  });
-
-  // Close menu when clicking outside panel
-  mobileMenu.addEventListener('click', (e) => {
-    if (e.target === mobileMenu) {
-      menuBtn.classList.remove('open');
-      menuPanel.classList.remove('slide-in');
-      menuPanel.classList.add('slide-out');
-      setTimeout(() => {
-        mobileMenu.classList.add('hidden');
-      }, 300);
-    }
-  });
-
-   /* Reveal Animation */
+/* Reveal Animation */
 const reveals = document.querySelectorAll(".reveal");
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -295,7 +234,86 @@ reveals.forEach(el => {
   observer.observe(el);
 });
 
- function easeInOutExpo(t) {
+/* Canvas Animation nur im Header-Bereich */
+function initCanvas() {
+  const canvas = document.querySelector(".wipe-canvas");
+  const header = document.querySelector(".header");
+  const ctx = canvas.getContext("2d");
+
+  const width = header.offsetWidth;
+  const height = header.offsetHeight;
+
+  // Pixelgröße für High-DPI
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  let radius = 0;
+  const maxRadius = Math.sqrt(width * width + height * height);
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(120,120,120,0.7)";
+    ctx.fillRect(0, 0, width, height);
+
+    let gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.6, centerX, centerY, radius);
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function animate() {
+    radius += 6;
+    draw();
+
+    if (radius < maxRadius) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.style.transition = "opacity 1s ease";
+      canvas.style.opacity = "0";
+      setTimeout(() => {
+        canvas.style.display = "none";
+      }, 1000);
+    }
+  }
+
+  animate();
+}
+
+function shouldRunCanvas() {
+  return window.innerWidth >= 1024; // nur ab lg (1024px)
+}
+
+window.addEventListener("load", () => {
+  if (shouldRunCanvas()) {
+    setTimeout(() => {
+      initCanvas();
+    }, 1500);
+  }
+});
+
+window.addEventListener("resize", () => {
+  const canvas = document.querySelector(".wipe-canvas");
+
+  if (shouldRunCanvas()) {
+    canvas.style.display = "block";
+    canvas.style.opacity = "1";
+    initCanvas();
+  } else {
+    canvas.style.display = "none";
+  }
+});
+
+  function easeInOutExpo(t) {
     if (t === 0) return 0;
     if (t === 1) return 1;
     if (t < 0.5) {
@@ -342,9 +360,8 @@ reveals.forEach(el => {
       scrollToTop(1500);
     });
   });
-  </script>
 
-
+</script>
 
 </body>
 </html>

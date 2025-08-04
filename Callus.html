@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Up Berlin – Professional Cleaning</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(90deg, #F7AFAE 0%, #FFF4B7 100%);
+      font-family: Arial, sans-serif;
+      color: #4B3F3A;
+    }
+
+    /* Slide-in Animation */
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(-100%); opacity: 0; }
+    }
+    .slide-in { animation: slideIn 0.3s ease forwards; }
+    .slide-out { animation: slideOut 0.3s ease forwards; }
+
+    /* Hamburger Animation */
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #4B3F3A;
+      border-radius: 1px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(4px, 4px);
+    }
+    .hamburger.open span:nth-child(2) {
+      transform: rotate(-45deg) translate(4px, -4px);
+    }
+  </style>
+</head>
+<body class="font-['Segoe_UI'] relative min-h-screen">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-content">
+    <div class="flex justify-between items-center px-4 py-3 relative">
+
+      <!-- Logo -->
+      <a href="index.html" class="font-medium text-lg hover:opacity-80">
+        CleanUpBerlin.de
+      </a>
+
+      <!-- Call us: nur mobil, rechts außen vor Menü -->
+      <a href="tel:+4930123456" 
+         class="md:hidden flex items-center gap-1 font-medium text-sm px-3 py-1 absolute right-14 top-1/2 -translate-y-1/2">
+        <span>Call us:</span>
+        <span class="text-sm">+49 30 000000</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-6 font-medium text-base">
+        <a href="#services" class="hover:opacity-80">Our Services</a>
+        <a href="#about" class="hover:opacity-80">About</a>
+        <a href="#contact" class="hover:opacity-80">Contact</a>
+      </nav>
+
+      <!-- Mobile Hamburger mit 2 Linien -->
+      <button id="menu-btn" 
+              class="hamburger md:hidden flex flex-col gap-2 ml-4 focus:outline-none relative z-10">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menü Overlay -->
+<div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+  <div id="menu-panel" class="bg-white w-64 h-full p-6 shadow-lg">
+    <!-- Menu Links -->
+    <nav class="flex flex-col gap-4 font-medium text-lg mt-10">
+      <a href="#services" class="hover:text-[#F7AFAE]">Our Services</a>
+      <a href="#about" class="hover:text-[#F7AFAE]">About</a>
+      <a href="#contact" class="hover:text-[#F7AFAE]">Contact</a>
+    </nav>
+  </div>
+</div>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuPanel = document.getElementById('menu-panel');
+
+  menuBtn.addEventListener('click', () => {
+    const isOpen = menuBtn.classList.toggle('open');
+
+    if (isOpen) {
+      mobileMenu.classList.remove('hidden');
+      menuPanel.classList.remove('slide-out');
+      menuPanel.classList.add('slide-in');
+    } else {
+      menuPanel.classList.remove('slide-in');
+      menuPanel.classList.add('slide-out');
+      setTimeout(() => {
+        mobileMenu.classList.add('hidden');
+      }, 300);
+    }
+  });
+
+  // Close menu when clicking outside panel
+  mobileMenu.addEventListener('click', (e) => {
+    if (e.target === mobileMenu) {
+      menuBtn.classList.remove('open');
+      menuPanel.classList.remove('slide-in');
+      menuPanel.classList.add('slide-out');
+      setTimeout(() => {
+        mobileMenu.classList.add('hidden');
+      }, 300);
+    }
+  });
+</script>
+
+<!-- Beispielseite -->
+<main class="flex-grow max-w-5xl mx-auto px-4 py-10">
+  <h1 class="text-2xl font-semibold text-center mb-6">Welcome to CleanUpBerlin</h1>
+  <p class="text-center max-w-xl mx-auto">
+    Professional cleaning services for your home & office in Berlin.
+  </p>
+</main>
+
+</body>
+</html>

@@ -7,6 +7,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    @keyframes fade-in-slow {
+      0% { opacity: 0; transform: scale(0.7777); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    .animate-fade-in-slow { animation: fade-in-slow 0.9s ease-out both; }
+
     body {
       margin: 0;
       background: linear-gradient(90deg, #F7AFAE 0%, #FFF4B7 100%);
@@ -14,17 +20,24 @@
       color: #4B3F3A;
     }
 
-    /* Slide-in Animation */
-    @keyframes slideIn {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+    .header {
+      position: relative;
+      background: transparent;
     }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(-100%); opacity: 0; }
+
+    canvas.wipe-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
     }
-    .slide-in { animation: slideIn 0.3s ease forwards; }
-    .slide-out { animation: slideOut 0.3s ease forwards; }
+
+    .header-content {
+      position: relative;
+      z-index: 3;
+    }
 
     /* Hamburger Animation */
     .hamburger span {
@@ -278,8 +291,8 @@
       }, 300);
     }
   });
-
-   /* Reveal Animation */
+  </script>
+/* Reveal Animation */
 const reveals = document.querySelectorAll(".reveal");
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -295,7 +308,86 @@ reveals.forEach(el => {
   observer.observe(el);
 });
 
- function easeInOutExpo(t) {
+/* Canvas Animation nur im Header-Bereich */
+function initCanvas() {
+  const canvas = document.querySelector(".wipe-canvas");
+  const header = document.querySelector(".header");
+  const ctx = canvas.getContext("2d");
+
+  const width = header.offsetWidth;
+  const height = header.offsetHeight;
+
+  // Pixelgröße für High-DPI
+  canvas.width = width * window.devicePixelRatio;
+  canvas.height = height * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  let radius = 0;
+  const maxRadius = Math.sqrt(width * width + height * height);
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "rgba(120,120,120,0.7)";
+    ctx.fillRect(0, 0, width, height);
+
+    let gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.6, centerX, centerY, radius);
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function animate() {
+    radius += 6;
+    draw();
+
+    if (radius < maxRadius) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.style.transition = "opacity 1s ease";
+      canvas.style.opacity = "0";
+      setTimeout(() => {
+        canvas.style.display = "none";
+      }, 1000);
+    }
+  }
+
+  animate();
+}
+
+function shouldRunCanvas() {
+  return window.innerWidth >= 1024; // nur ab lg (1024px)
+}
+
+window.addEventListener("load", () => {
+  if (shouldRunCanvas()) {
+    setTimeout(() => {
+      initCanvas();
+    }, 1500);
+  }
+});
+
+window.addEventListener("resize", () => {
+  const canvas = document.querySelector(".wipe-canvas");
+
+  if (shouldRunCanvas()) {
+    canvas.style.display = "block";
+    canvas.style.opacity = "1";
+    initCanvas();
+  } else {
+    canvas.style.display = "none";
+  }
+});
+
+  function easeInOutExpo(t) {
     if (t === 0) return 0;
     if (t === 1) return 1;
     if (t < 0.5) {
@@ -342,7 +434,6 @@ reveals.forEach(el => {
       scrollToTop(1500);
     });
   });
-  </script>
 
 
 
