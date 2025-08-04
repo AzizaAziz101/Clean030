@@ -7,6 +7,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    @keyframes fade-in-slow {
+      0% { opacity: 0; transform: scale(0.7777); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    .animate-fade-in-slow { animation: fade-in-slow 0.9s ease-out both; }
+    
     body {
       margin: 0;
       background: linear-gradient(90deg, #F7AFAE 0%, #FFF4B7 100%);
